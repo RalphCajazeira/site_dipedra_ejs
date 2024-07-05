@@ -57,7 +57,7 @@
 /* Responsividade para telas menores que 490px */
 @media (max-width: 490px) {
   .footer-info {
-    padding: 0 2.5%; /* Espaçamento mínimo nas laterais */
+    padding: 0 5%; /* Espaçamento mínimo nas laterais */
   }
 
   .footer-section {
