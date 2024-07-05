@@ -1,4 +1,3 @@
-/* footer.css */
 footer {
   background-color: #f5f5f5;
   color: #333;
@@ -22,7 +21,7 @@ footer .container {
 
 .footer-section {
   flex: 1;
-  text-align: center; /* Centraliza o texto dentro de cada seção */
+  text-align: center;
   padding: 0 20px;
 }
 
@@ -39,21 +38,21 @@ footer .container {
 
 .footer-info .icon,
 .footer-info .social-icons img {
-  width: 24px; /* Define a largura dos ícones */
-  height: 24px; /* Define a altura dos ícones */
+  width: 24px;
+  height: 24px;
 }
 
 .footer-info .social-icons {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px; /* Espaçamento entre os ícones */
+  gap: 10px;
 }
 
 #google-maps {
   width: 100%;
   max-width: 700px;
-  margin: 0 auto 20px; /* Centraliza o mapa */
+  margin: 0 auto 20px;
 }
 
 #google-maps iframe {
@@ -64,11 +63,11 @@ footer .container {
 
 .footer-copyright {
   width: 100%;
-  text-align: center; /* Centraliza o texto do rodapé */
+  text-align: center;
   margin-top: 20px;
 }
 
 footer p {
   margin-top: 20px;
-  text-align: center; /* Centraliza o texto do rodapé */
+  text-align: center;
 }
