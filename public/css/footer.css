@@ -1,0 +1,113 @@
+/* footer.css */
+footer {
+  background-color: #f5f5f5;
+  color: #333;
+  text-align: center;
+  padding: 20px 0;
+}
+
+footer .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 100px;
+}
+
+.footer-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.footer-section {
+  flex: 1;
+  text-align: center; /* Centraliza o texto dentro de cada seção */
+  padding: 0 20px;
+}
+
+.footer-section h4 {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-section p {
+  margin-bottom: 10px;
+}
+
+.footer-info .icon,
+.footer-info .social-icons img {
+  width: 24px; /* Define a largura dos ícones */
+  height: 24px; /* Define a altura dos ícones */
+}
+
+.footer-info .social-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; /* Espaçamento entre os ícones */
+}
+
+#google-maps {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto 20px; /* Centraliza o mapa */
+}
+
+#google-maps iframe {
+  width: 100%;
+  height: 270px;
+  border: none;
+}
+
+.footer-copyright {
+  width: 100%;
+  text-align: center; /* Centraliza o texto do rodapé */
+  margin-top: 20px;
+}
+
+footer p {
+  margin-top: 20px;
+  text-align: center; /* Centraliza o texto do rodapé */
+}
+
+/* Responsividade do footer */
+@media (max-width: 768px) {
+  .footer-info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-section {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .footer-info .icon,
+  .footer-info .social-icons img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .social-icons {
+    flex-direction: row;
+  }
+
+  #google-maps iframe {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 490px) {
+  .footer-info {
+    padding: 0 2.5%; /* Espaçamento mínimo nas laterais */
+  }
+
+  .footer-section {
+    width: 95%;
+  }
+}

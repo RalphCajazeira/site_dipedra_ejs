@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<%- include('../partials/head', { title: 'Seu Site' }) %>
+
+<body>
+  <%- include('../partials/header') %>
+
+  <main>
+    <div class="slider">
+      <div class="slide visible" style="background-image: url('/img/slide1.jpg')">
+        <div class="text-overlay">
+          <h2>Qualidade e Sofisticação</h2>
+          <p>Conheça nossas pedras naturais selecionadas para você.</p>
+        </div>
+        <div class="button-container">
+          <a class="button" href="#">Saiba Mais</a>
+        </div>
+      </div>
+      <div class="slide" style="background-image: url('/img/slide2.jpg')">
+        <div class="text-overlay">
+          <h2>Beleza Natural</h2>
+          <p>Transforme seus projetos com nossas pedras naturais.</p>
+        </div>
+        <div class="button-container">
+          <a class="button" href="#">Saiba Mais</a>
+        </div>
+      </div>
+      <div class="slide" style="background-image: url('/img/slide3.jpg')">
+        <div class="text-overlay">
+          <h2>Durabilidade e Elegância</h2>
+          <p>Pedras naturais que combinam durabilidade com elegância.</p>
+        </div>
+        <div class="button-container">
+          <a class="button" href="#">Saiba Mais</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script src="/js/scripts.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      let currentSlide = 0;
+      const slides = document.querySelectorAll(".slide");
+      const totalSlides = slides.length;
+
+      function showSlide(index) {
+        slides.forEach((slide, i) => {
+          slide.classList.remove("visible");
+          if (i === index) {
+            slide.classList.add("visible");
+          }
+        });
+      }
+
+      function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        showSlide(currentSlide);
+      }
+
+      setInterval(nextSlide, 6000); // Change slide every 6 seconds
+    });
+  </script>
+</body>
+
+</html>

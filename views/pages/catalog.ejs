@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<%- include('../partials/head', { title: 'Catálogo' }) %>
+
+<body>
+  <%- include('../partials/header') %>
+
+  <main>
+    <section class="catalog-intro">
+      <div class="container">
+        <h1>Catálogo de Pedras Naturais</h1>
+        <p>Explore nossa ampla seleção de pedras naturais, incluindo mármore, granito, quartzito e mais. Encontre a pedra perfeita para seu projeto.</p>
+      </div>
+    </section>
+
+    <section class="search-container">
+      <input type="text" id="search-input" placeholder="Pesquisar..." />
+    </section>
+
+    <section class="image-grid-container">
+      <div class="image-grid">
+        <!-- As imagens serão carregadas dinamicamente a partir de um script -->
+      </div>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <script src="/js/scripts.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch("/partials/header.html")
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("header-placeholder").innerHTML = data;
+        });
+
+      fetch("/partials/footer.html")
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("footer-placeholder").innerHTML = data;
+        });
+
+      const searchInput = document.getElementById("search-input");
+      const imageGrid = document.querySelector(".image-grid");
+
+      const images = [{
+          src: "/img/catalog/granite/1.jpg",
+          alt: "Granito 1"
+        },
+        {
+          src: "/img/catalog/granite/2.jpg",
+          alt: "Granito 2"
+        },
+        {
+          src: "/img/catalog/marble/1.jpg",
+          alt: "Mármore 1"
+        },
+        {
+          src: "/img/catalog/marble/2.jpg",
+          alt: "Mármore 2"
+        },
+        // Adicione mais imagens conforme necessário
+      ];
+
+      function renderImages(images) {
+        imageGrid.innerHTML = images.map(image => `
+          <div class="image-item">
+            <a href="#">
+              <div class="image-container">
+                <img src="${image.src}" alt="${image.alt}" />
+              </div>
+              <div class="text-container">
+                <p>${image.alt}</p>
+              </div>
+            </a>
+          </div>
+        `).join("");
+      }
+
+      renderImages(images);
+
+      searchInput.addEventListener("input", function() {
+        const filter = searchInput.value.toLowerCase();
+        const filteredImages = images.filter(image => image.alt.toLowerCase().includes(filter));
+        renderImages(filteredImages);
+      });
+    });
+  </script>
+</body>
+
+</html>

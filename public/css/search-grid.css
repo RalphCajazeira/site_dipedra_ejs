@@ -1,0 +1,75 @@
+/* search-grid.css */
+.search-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+#search-input {
+  width: 40%;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  margin: 20px;
+}
+
+.image-item {
+  text-align: center;
+  width: 350px; /* Define uma largura fixa para as caixas */
+  height: 300px; /* Define uma altura fixa para as caixas */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.image-item a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.image-container {
+  width: 100%;
+  height: 80%; /* Deixa espaço para o texto abaixo */
+  overflow: hidden;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Assegura que a imagem cubra toda a caixa */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  transition: transform 0.3s;
+}
+
+.image-container img:hover {
+  transform: scale(1.05);
+}
+
+.text-container {
+  width: 100%;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.8); /* Fundo branco com transparência */
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-sizing: border-box;
+}
+
+.image-item p {
+  margin: 0;
+  font-size: 25px; /* Aumenta o tamanho do texto */
+  color: #000000;
+  text-align: center;
+}
