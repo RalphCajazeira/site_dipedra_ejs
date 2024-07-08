@@ -1,58 +1,63 @@
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
 
-const getCategories = (req, res) => {
-  const directoryPath = path.join(__dirname, "../public/img/mostruario");
-  fs.readdir(directoryPath, (err, files) => {
-    if (err) {
-      return res.status(500).send("Unable to scan directory");
-    }
+exports.renderPage = (req, res) => {
+  res.render("pages/mostruario");
+};
 
-    const images = files.filter((file) => {
-      return (
-        file.endsWith(".jpg") || file.endsWith(".png") || file.endsWith(".jpeg")
+exports.getFilters = (req, res) => {
+  const imagePath = path.join(__dirname, "../public/img/mostruario");
+  const files = fs.readdirSync(imagePath);
+  const filters = {
+    types: new Set(),
+    names: new Set(),
+    classifications: new Set(),
+    styles: new Set(),
+    environments: new Set(),
+  };
+
+  files.forEach((file) => {
+    const [type, name, classification, style, environment] = file
+      .replace(".jpg", "")
+      .split(" --- ");
+    filters.types.add(type);
+    filters.names.add(name);
+    filters.classifications.add(classification);
+    filters.styles.add(style);
+    filters.environments.add(environment);
+  });
+
+  Object.keys(filters).forEach((key) => {
+    filters[key] = Array.from(filters[key]);
+  });
+
+  res.json(filters);
+};
+
+exports.getImages = (req, res) => {
+  const imagePath = path.join(__dirname, "../public/img/mostruario");
+  const files = fs.readdirSync(imagePath);
+  const { category = "", filters = "" } = req.query;
+  const filterArray = filters.split(",");
+
+  const images = files
+    .filter((file) => {
+      const [type, name, classification, style, environment] = file
+        .replace(".jpg", "")
+        .split(" --- ");
+      const fileName =
+        `${type} --- ${name} --- ${classification} --- ${style} --- ${environment}`.toLowerCase();
+      const matchesCategory =
+        category === "" || fileName.includes(category.toLowerCase());
+      const matchesFilters = filterArray.every((filter) =>
+        fileName.includes(filter.toLowerCase())
       );
-    });
+      return matchesCategory && matchesFilters;
+    })
+    .map((file) => ({
+      path: `/img/mostruario/${file}`,
+      name: file.replace(".jpg", "").split(" --- ")[1],
+    }));
 
-    res.json(images);
-  });
+  res.json(images);
 };
-
-const getFilters = (req, res) => {
-  const directoryPath = path.join(__dirname, "../public/img/mostruario");
-  fs.readdir(directoryPath, (err, files) => {
-    if (err) {
-      return res.status(500).send("Unable to scan directory");
-    }
-
-    const filters = {
-      tipoPedra: new Set(),
-      nomePedra: new Set(),
-      classificacaoPedra: new Set(),
-      estiloProduto: new Set(),
-      ambiente: new Set(),
-    };
-
-    files.forEach((file) => {
-      const parts = file.split(" --- ");
-      if (parts.length === 5) {
-        const [tipo, nome, classificacao, estilo, ambiente] = parts;
-        if (tipo) filters.tipoPedra.add(tipo.trim());
-        if (nome) filters.nomePedra.add(nome.trim());
-        if (classificacao) filters.classificacaoPedra.add(classificacao.trim());
-        if (estilo) filters.estiloProduto.add(estilo.trim());
-        if (ambiente) filters.ambiente.add(ambiente.trim());
-      }
-    });
-
-    res.json({
-      tipoPedra: Array.from(filters.tipoPedra),
-      nomePedra: Array.from(filters.nomePedra),
-      classificacaoPedra: Array.from(filters.classificacaoPedra),
-      estiloProduto: Array.from(filters.estiloProduto),
-      ambiente: Array.from(filters.ambiente),
-    });
-  });
-};
-
-module.exports = { getCategories, getFilters };

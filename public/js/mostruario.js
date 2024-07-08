@@ -1,90 +1,69 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const fetchFilters = async () => {
-    try {
-      const response = await fetch("/api/mostruario/filters");
-      const filters = await response.json();
-      renderFilters(filters);
-    } catch (error) {
-      console.error("Erro ao carregar filtros: ", error);
-    }
-  };
+  const productGrid = document.getElementById("product-grid");
+  const filterContainer = document.getElementById("filter-container");
+  const searchInput = document.getElementById("search-input");
 
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch("/api/mostruario");
-      const categories = await response.json();
-      renderCategories(categories);
-    } catch (error) {
-      console.error("Erro ao carregar categorias: ", error);
-    }
-  };
+  fetch("/api/mostruario/filters")
+    .then((response) => response.json())
+    .then((filters) => renderFilters(filters))
+    .catch((error) => console.error("Erro ao carregar filtros:", error));
 
-  const renderFilters = (filters) => {
-    const filterContainer = document.querySelector(".filter-container");
+  function renderFilters(filters) {
     Object.keys(filters).forEach((key) => {
-      const filterGroup = document.createElement("div");
-      filterGroup.classList.add("filter-group");
-
-      const filterLabel = document.createElement("label");
-      filterLabel.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-      filterGroup.appendChild(filterLabel);
-
-      filters[key].forEach((value) => {
-        const filterItem = document.createElement("div");
-        filterItem.classList.add("filter-item");
-
+      const filterDiv = document.createElement("div");
+      filterDiv.classList.add("filter");
+      filterDiv.innerHTML = `<h3>${key}</h3>`;
+      filters[key].forEach((option) => {
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        checkbox.id = `${key}-${value}`;
-        checkbox.name = key;
-        checkbox.value = value;
-
+        checkbox.value = option;
+        checkbox.id = `${key}-${option}`;
         const label = document.createElement("label");
-        label.htmlFor = checkbox.id;
-        label.textContent = value;
+        label.htmlFor = `${key}-${option}`;
+        label.textContent = option;
+        filterDiv.appendChild(checkbox);
+        filterDiv.appendChild(label);
 
-        filterItem.appendChild(checkbox);
-        filterItem.appendChild(label);
-        filterGroup.appendChild(filterItem);
+        checkbox.addEventListener("change", () => {
+          fetchImages();
+        });
       });
-
-      filterContainer.appendChild(filterGroup);
+      filterContainer.appendChild(filterDiv);
     });
-  };
+  }
 
-  const renderCategories = (categories) => {
-    const productGrid = document.getElementById("product-grid");
+  searchInput.addEventListener("input", fetchImages);
+
+  fetchImages();
+
+  function fetchImages() {
+    const query = searchInput.value.toLowerCase();
+    const filters = Array.from(
+      filterContainer.querySelectorAll("input:checked")
+    ).map((cb) => cb.value);
+
+    fetch(
+      `/api/mostruario/images?category=${query}&filters=${filters.join(",")}`
+    )
+      .then((response) => response.json())
+      .then((images) => renderImages(images))
+      .catch((error) => console.error("Erro ao carregar imagens:", error));
+  }
+
+  function renderImages(images) {
     productGrid.innerHTML = "";
-    categories.forEach((category) => {
+    images.forEach((image) => {
       const imageItem = document.createElement("div");
       imageItem.classList.add("image-item");
-
-      const anchor = document.createElement("a");
-      anchor.href = "#";
-
-      const imageContainer = document.createElement("div");
-      imageContainer.classList.add("image-container");
-
-      const img = document.createElement("img");
-      img.src = `/img/mostruario/${category}`;
-      img.alt = category.split(" --- ")[1];
-
-      imageContainer.appendChild(img);
-
-      const textContainer = document.createElement("div");
-      textContainer.classList.add("text-container");
-
-      const p = document.createElement("p");
-      p.textContent = category.split(" --- ")[1];
-
-      textContainer.appendChild(p);
-      anchor.appendChild(imageContainer);
-      anchor.appendChild(textContainer);
-      imageItem.appendChild(anchor);
+      imageItem.innerHTML = `
+        <div class="image-container">
+          <img src="${image.path}" alt="Produto">
+        </div>
+        <div class="text-container">
+          <p>${image.name}</p>
+        </div>
+      `;
       productGrid.appendChild(imageItem);
     });
-  };
-
-  fetchFilters();
-  fetchCategories();
+  }
 });
