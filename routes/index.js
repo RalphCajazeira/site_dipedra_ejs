@@ -10,4 +10,8 @@ router.get("/mostruario", mostruarioController.renderPage);
 router.get("/api/mostruario/filters", mostruarioController.getFilters);
 router.get("/api/mostruario/images", mostruarioController.getImages);
 
+router.get("/about", (req, res) => {
+  res.render("pages/about");
+});
+
 module.exports = router;
