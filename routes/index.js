@@ -1,5 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const path = require("path");
+
+// Controladores
+const mostruarioController = require("../controllers/mostruarioController");
 
 // Rota para a página inicial
 router.get("/", (req, res) => {
@@ -15,5 +19,9 @@ router.get("/about", (req, res) => {
 router.get("/mostruario", (req, res) => {
   res.render("pages/mostruario");
 });
+
+// API para carregar categorias e filtros
+router.get("/api/mostruario", mostruarioController.getCategories);
+router.get("/api/mostruario/filters", mostruarioController.getFilters);
 
 module.exports = router;

@@ -1,64 +1,62 @@
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
 
-exports.getMostruario = (req, res) => {
-  const dirPath = path.join(__dirname, "..", "public", "img", "mostruario");
-  const defaultImage = "/img/semImagem.png";
-
-  fs.readdir(dirPath, (err, folders) => {
+const getCategories = (req, res) => {
+  const categoriesDir = path.join(__dirname, "../public/img/mostruario");
+  fs.readdir(categoriesDir, (err, files) => {
     if (err) {
-      return res.status(500).json({ error: "Failed to read directories" });
+      return res.status(500).send("Erro ao listar categorias");
     }
-
-    const categories = folders.map((folder) => {
-      const imagePath = path.join(dirPath, folder, "Capa.jpg");
-      const image = fs.existsSync(imagePath)
-        ? `/img/mostruario/${folder}/Capa.jpg`
-        : defaultImage;
-
-      return {
-        name: folder,
-        image: image,
-      };
-    });
-
+    const categories = files.filter((file) =>
+      fs.lstatSync(path.join(categoriesDir, file)).isDirectory()
+    );
     res.json(categories);
   });
 };
 
-exports.getCategoria = (req, res) => {
-  const categoria = req.params.categoria;
-  const dirPath = path.join(
-    __dirname,
-    "..",
-    "public",
-    "img",
-    "mostruario",
-    categoria
-  );
+const getFilters = (req, res) => {
+  const categoriesDir = path.join(__dirname, "../public/img/mostruario");
+  const filters = {
+    "Tipo da Pedra": [],
+    "Nome da Pedra": [],
+    "Classificação da Pedra": [],
+    "Estilo do Produto": [],
+    Ambiente: [],
+  };
 
-  fs.readdir(dirPath, (err, files) => {
+  fs.readdir(categoriesDir, (err, files) => {
     if (err) {
-      return res.status(500).json({ error: "Failed to read files" });
+      return res.status(500).send("Erro ao listar filtros");
     }
 
-    const images = files
-      .filter((file) => file !== "Capa.jpg")
-      .map((file) => {
-        const [tipo, nome, classificacao, estilo, ambiente] = file
-          .replace(".jpg", "")
-          .split("---");
-        return {
-          name: file,
-          image: `/img/mostruario/${categoria}/${file}`,
-          tipo,
-          nome,
-          classificacao,
-          estilo,
-          ambiente,
-        };
-      });
-
-    res.render("pages/categoria", { categoria, images });
+    files.forEach((category) => {
+      const categoryPath = path.join(categoriesDir, category);
+      if (fs.lstatSync(categoryPath).isDirectory()) {
+        fs.readdir(categoryPath, (err, images) => {
+          if (err) return;
+          images.forEach((image) => {
+            const [tipo, nome, classificacao, estilo, ambiente] = image
+              .replace(".jpg", "")
+              .split(" --- ");
+            if (!filters["Tipo da Pedra"].includes(tipo))
+              filters["Tipo da Pedra"].push(tipo);
+            if (!filters["Nome da Pedra"].includes(nome))
+              filters["Nome da Pedra"].push(nome);
+            if (!filters["Classificação da Pedra"].includes(classificacao))
+              filters["Classificação da Pedra"].push(classificacao);
+            if (!filters["Estilo do Produto"].includes(estilo))
+              filters["Estilo do Produto"].push(estilo);
+            if (!filters["Ambiente"].includes(ambiente))
+              filters["Ambiente"].push(ambiente);
+          });
+        });
+      }
+    });
+    res.json(filters);
   });
+};
+
+module.exports = {
+  getCategories,
+  getFilters,
 };

@@ -1,29 +1,21 @@
 const express = require("express");
 const path = require("path");
-const mostruarioController = require("./controllers/mostruarioController");
+const indexRouter = require("./routes/index");
 const app = express();
 
-app.set("view engine", "ejs");
+// Configuração da view engine EJS
 app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+
+// Configuração de arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/", (req, res) => {
-  res.render("pages/index");
+// Uso das rotas
+app.use("/", indexRouter);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
 
-app.get("/about", (req, res) => {
-  res.render("pages/about");
-});
-
-app.get("/mostruario", (req, res) => {
-  res.render("pages/mostruario");
-});
-
-app.get("/api/mostruario", mostruarioController.getMostruario);
-
-app.get("/mostruario/:categoria", mostruarioController.getCategoria);
-
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
-});
+module.exports = app;

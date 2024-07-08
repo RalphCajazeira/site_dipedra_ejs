@@ -1,41 +1,57 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("search-input");
   const productGrid = document.getElementById("product-grid");
+  const filterContainer = document.getElementById("filter-container");
 
-  fetch("/api/mostruario")
-    .then((response) => response.json())
-    .then((categories) => {
+  const loadCategories = async () => {
+    try {
+      const response = await fetch("/api/mostruario");
+      const categories = await response.json();
       categories.forEach((category) => {
-        const categoryElement = document.createElement("div");
-        categoryElement.classList.add("image-item");
-        categoryElement.innerHTML = `
-          <a href="/mostruario/${category.name}">
+        const item = document.createElement("div");
+        item.className = "image-item";
+        item.innerHTML = `
+          <a href="/mostruario/${category}">
             <div class="image-container">
-              <img src="${category.image}" alt="${category.name}">
+              <img src="/img/mostruario/${category}/Capa.jpg" alt="${category}" onerror="this.src='/img/semImagem.png'">
             </div>
             <div class="text-container">
-              <p>${category.name}</p>
+              <p>${category}</p>
             </div>
           </a>
         `;
-        productGrid.appendChild(categoryElement);
+        productGrid.appendChild(item);
       });
-    })
-    .catch((error) => {
-      console.error("Erro ao carregar categorias:", error);
-    });
+    } catch (error) {
+      console.error("Erro ao carregar categorias: ", error);
+    }
+  };
 
-  searchInput.addEventListener("input", function () {
-    const filter = searchInput.value.toLowerCase();
-    const items = productGrid.querySelectorAll(".image-item");
+  const loadFilters = async () => {
+    try {
+      const response = await fetch("/api/mostruario/filters");
+      const filters = await response.json();
+      Object.keys(filters).forEach((filterKey) => {
+        const filterGroup = document.createElement("div");
+        filterGroup.className = "filter-group";
+        filterGroup.innerHTML = `<h3>${filterKey}</h3>`;
+        filters[filterKey].forEach((filterValue) => {
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.value = filterValue;
+          checkbox.id = `${filterKey}-${filterValue}`;
+          const label = document.createElement("label");
+          label.htmlFor = `${filterKey}-${filterValue}`;
+          label.textContent = filterValue;
+          filterGroup.appendChild(checkbox);
+          filterGroup.appendChild(label);
+        });
+        filterContainer.appendChild(filterGroup);
+      });
+    } catch (error) {
+      console.error("Erro ao carregar filtros: ", error);
+    }
+  };
 
-    items.forEach((item) => {
-      const text = item.querySelector("p").textContent.toLowerCase();
-      if (text.includes(filter)) {
-        item.style.display = "";
-      } else {
-        item.style.display = "none";
-      }
-    });
-  });
+  loadCategories();
+  loadFilters();
 });
