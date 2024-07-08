@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<%- include('../partials/head', { title: 'Admin - Mostruário' }) %>
+
+<body>
+  <main>
+    <div class="admin-container">
+      <h2>Administração de Mostruário</h2>
+      <form action="/mostruario/admin/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+        <div class="form-group">
+          <label for="password">Informe a Senha:</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+
+        <div class="form-group">
+          <label for="type">Tipo da Pedra:</label>
+          <input type="text" id="type" name="type" required>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Nome da Pedra:</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="classification">Classificação da Pedra:</label>
+          <input type="text" id="classification" name="classification" required>
+        </div>
+
+        <div class="form-group">
+          <label for="style">Estilo do Produto:</label>
+          <input type="text" id="style" name="style" required>
+        </div>
+
+        <div class="form-group">
+          <label for="environment">Ambiente:</label>
+          <input type="text" id="environment" name="environment" required>
+        </div>
+
+        <div class="form-group">
+          <label for="image">Selecione a Imagem:</label>
+          <input type="file" id="image" name="image" accept="image/*" required>
+        </div>
+
+        <button type="submit">Upload</button>
+      </form>
+      <p id="successMessage" style="display:none;">Upload realizado com sucesso!</p>
+    </div>
+  </main>
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+
+      fetch(form.action, {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.text())
+        .then(responseText => {
+          if (responseText.includes('Upload realizado com sucesso!')) {
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+              window.location.href = '/mostruario/admin';
+            }, 5000);
+          } else {
+            alert(responseText);
+          }
+        })
+        .catch(error => {
+          console.error('Erro:', error);
+          alert('Ocorreu um erro ao realizar o upload.');
+        });
+    });
+  </script>
+  <style>
+    .admin-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #successMessage {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</body>
+
+</html>
