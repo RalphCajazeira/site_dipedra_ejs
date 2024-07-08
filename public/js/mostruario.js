@@ -2,39 +2,40 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("search-input");
   const productGrid = document.getElementById("product-grid");
 
-  const products = [
-    { name: "Produto 1", image: "/img/produto1.jpg" },
-    { name: "Produto 2", image: "/img/produto2.jpg" },
-    { name: "Produto 3", image: "/img/produto3.jpg" },
-    // Adicione mais produtos conforme necessário
-  ];
+  // Função para buscar categorias e imagens dinamicamente
+  function fetchCategories() {
+    fetch("/api/mostruario")
+      .then((response) => response.json())
+      .then((data) => displayCategories(data))
+      .catch((error) => console.error("Erro ao carregar categorias:", error));
+  }
 
-  function displayProducts(filteredProducts) {
+  function displayCategories(categories) {
     productGrid.innerHTML = "";
-    filteredProducts.forEach((product) => {
-      const productItem = document.createElement("div");
-      productItem.classList.add("image-item");
-      productItem.innerHTML = `
-          <a href="#">
-            <div class="image-container">
-              <img src="${product.image}" alt="${product.name}" />
-            </div>
-            <div class="text-container">
-              <p>${product.name}</p>
-            </div>
-          </a>
-        `;
-      productGrid.appendChild(productItem);
+    categories.forEach((category) => {
+      const categoryDiv = document.createElement("div");
+      categoryDiv.classList.add("image-item");
+      categoryDiv.innerHTML = `
+        <a href="/mostruario/${category.name}">
+          <div class="image-container">
+            <img src="/img/mostruario/${category.name}/capa.jpg" alt="${category.name}" onerror="this.src='/img/Upload.png'"/>
+          </div>
+          <div class="text-container">
+            <p>${category.name}</p>
+          </div>
+        </a>
+      `;
+      productGrid.appendChild(categoryDiv);
     });
   }
 
-  displayProducts(products);
-
-  searchInput.addEventListener("input", () => {
-    const filter = searchInput.value.toLowerCase();
-    const filteredProducts = products.filter((product) =>
-      product.name.toLowerCase().includes(filter)
+  searchInput.addEventListener("input", (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filteredCategories = categories.filter((category) =>
+      category.name.toLowerCase().includes(searchTerm)
     );
-    displayProducts(filteredProducts);
+    displayCategories(filteredCategories);
   });
+
+  fetchCategories(); // Carrega as categorias ao iniciar
 });

@@ -1,19 +1,32 @@
 const express = require("express");
 const path = require("path");
+
 const app = express();
 
-// Configuração da view engine
+// Definindo o motor de visualização como EJS
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Configuração do diretório público
+// Servindo arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
-// Rotas
-app.use("/", require("./routes/index"));
+// Rota para a página inicial
+app.get("/", (req, res) => {
+  res.render("pages/index");
+});
 
-// Inicialização do servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+// Rota para a página "Quem Somos"
+app.get("/about", (req, res) => {
+  res.render("pages/about");
+});
+
+// Rota para a página "Mostruário"
+app.get("/mostruario", (req, res) => {
+  res.render("pages/mostruario");
+});
+
+// Iniciando o servidor
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Servidor rodando em http://localhost:${port}`);
 });
