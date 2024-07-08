@@ -4,6 +4,7 @@
 
 <body>
   <%- include('../partials/header') %>
+
   <main>
     <section class="showcase">
       <h2>Nosso Mostruário</h2>
@@ -11,14 +12,15 @@
       <div class="search-container">
         <input type="text" id="search-input" placeholder="Pesquisar..." />
       </div>
-      <div id="filter-container">
-        <!-- Caixas de marcação dinâmicas -->
+      <div class="filter-container">
+        <!-- Filtros dinâmicos serão inseridos aqui -->
       </div>
       <div class="image-grid" id="product-grid">
-        <!-- Aqui vamos colocar as imagens do mostruário -->
+        <!-- Imagens do mostruário serão inseridas aqui -->
       </div>
     </section>
   </main>
+
   <%- include('../partials/footer') %>
   <script src="/js/mostruario.js"></script>
 </body>
