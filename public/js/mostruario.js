@@ -9,20 +9,30 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch((error) => console.error("Erro ao carregar filtros:", error));
 
   function renderFilters(filters) {
+    const filterNames = {
+      types: "Tipo da Pedra",
+      names: "Nome da Pedra",
+      classifications: "Classificação da Pedra",
+      styles: "Estilo do Produto",
+      environments: "Ambiente",
+    };
+
     Object.keys(filters).forEach((key) => {
       const filterDiv = document.createElement("div");
       filterDiv.classList.add("filter");
-      filterDiv.innerHTML = `<h3>${key}</h3>`;
+      filterDiv.innerHTML = `<h3>${filterNames[key]}</h3>`;
       filters[key].forEach((option) => {
+        const checkboxDiv = document.createElement("div");
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.value = option;
         checkbox.id = `${key}-${option}`;
         const label = document.createElement("label");
         label.htmlFor = `${key}-${option}`;
-        label.textContent = option;
-        filterDiv.appendChild(checkbox);
-        filterDiv.appendChild(label);
+        label.textContent = option.replace(/-/g, " ");
+        checkboxDiv.appendChild(checkbox);
+        checkboxDiv.appendChild(label);
+        filterDiv.appendChild(checkboxDiv);
 
         checkbox.addEventListener("change", () => {
           fetchImages();
@@ -60,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <img src="${image.path}" alt="Produto">
         </div>
         <div class="text-container">
-          <p>${image.name}</p>
+          <p>${image.name.replace(/-/g, " ")}</p>
         </div>
       `;
       productGrid.appendChild(imageItem);

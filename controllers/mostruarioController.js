@@ -17,14 +17,15 @@ exports.getFilters = (req, res) => {
   };
 
   files.forEach((file) => {
-    const [type, name, classification, style, environment] = file
-      .replace(".jpg", "")
-      .split(" --- ");
-    filters.types.add(type);
-    filters.names.add(name);
-    filters.classifications.add(classification);
-    filters.styles.add(style);
-    filters.environments.add(environment);
+    const parts = file.replace(".jpg", "").split(" --- ");
+    if (parts.length === 5) {
+      const [type, name, classification, style, environment] = parts;
+      filters.types.add(type.replace(/-/g, " "));
+      filters.names.add(name.replace(/-/g, " "));
+      filters.classifications.add(classification.replace(/-/g, " "));
+      filters.styles.add(style.replace(/-/g, " "));
+      filters.environments.add(environment.replace(/-/g, " "));
+    }
   });
 
   Object.keys(filters).forEach((key) => {
@@ -56,7 +57,7 @@ exports.getImages = (req, res) => {
     })
     .map((file) => ({
       path: `/img/mostruario/${file}`,
-      name: file.replace(".jpg", "").split(" --- ")[1],
+      name: file.replace(".jpg", "").split(" --- ")[1].replace(/-/g, " "),
     }));
 
   res.json(images);
