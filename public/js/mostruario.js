@@ -1,41 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("search-input");
-  const productGrid = document.getElementById("product-grid");
+  // Função para carregar categorias do mostruário
+  fetch("/api/mostruario")
+    .then((response) => response.json())
+    .then((data) => {
+      const productGrid = document.getElementById("product-grid");
+      productGrid.innerHTML = "";
 
-  // Função para buscar categorias e imagens dinamicamente
-  function fetchCategories() {
-    fetch("/api/mostruario")
-      .then((response) => response.json())
-      .then((data) => displayCategories(data))
-      .catch((error) => console.error("Erro ao carregar categorias:", error));
-  }
+      data.forEach((category) => {
+        const categoryItem = document.createElement("div");
+        categoryItem.classList.add("image-item");
 
-  function displayCategories(categories) {
-    productGrid.innerHTML = "";
-    categories.forEach((category) => {
-      const categoryDiv = document.createElement("div");
-      categoryDiv.classList.add("image-item");
-      categoryDiv.innerHTML = `
-        <a href="/mostruario/${category.name}">
-          <div class="image-container">
-            <img src="/img/mostruario/${category.name}/capa.jpg" alt="${category.name}" onerror="this.src='/img/Upload.png'"/>
-          </div>
-          <div class="text-container">
-            <p>${category.name}</p>
-          </div>
-        </a>
-      `;
-      productGrid.appendChild(categoryDiv);
+        categoryItem.innerHTML = `
+          <a href="/mostruario/${category.name}">
+            <div class="image-container">
+              <img src="${category.image}" alt="${category.name}" />
+            </div>
+            <div class="text-container">
+              <p>${category.name}</p>
+            </div>
+          </a>
+        `;
+
+        productGrid.appendChild(categoryItem);
+      });
+    })
+    .catch((error) => {
+      console.error("Erro ao carregar categorias:", error);
     });
-  }
-
-  searchInput.addEventListener("input", (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    const filteredCategories = categories.filter((category) =>
-      category.name.toLowerCase().includes(searchTerm)
-    );
-    displayCategories(filteredCategories);
-  });
-
-  fetchCategories(); // Carrega as categorias ao iniciar
 });

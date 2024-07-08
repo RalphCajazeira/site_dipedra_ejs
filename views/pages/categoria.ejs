@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<%- include('../partials/head', { title: categoria }) %>
+
+<body>
+  <%- include('../partials/header') %>
+  <main>
+    <section class="category-showcase">
+      <h2><%= categoria %></h2>
+      <div class="image-grid">
+        <% images.forEach(image => { %>
+        <div class="image-item">
+          <div class="image-container">
+            <img src="<%= image.image %>" alt="<%= image.name %>" />
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </section>
+  </main>
+  <%- include('../partials/footer') %>
+</body>
+
+</html>
