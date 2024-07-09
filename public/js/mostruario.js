@@ -44,8 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   searchInput.addEventListener("input", fetchImages);
 
-  fetchImages();
-
   function fetchImages() {
     const query = searchInput.value.toLowerCase();
     const filters = Array.from(
@@ -57,6 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
     )
       .then((response) => response.json())
       .then((images) => renderImages(images))
+      .then(() => updateFilters())
       .catch((error) => console.error("Erro ao carregar imagens:", error));
   }
 
@@ -76,4 +75,37 @@ document.addEventListener("DOMContentLoaded", () => {
       productGrid.appendChild(imageItem);
     });
   }
+
+  function updateFilters() {
+    const checkedFilters = Array.from(
+      filterContainer.querySelectorAll("input:checked")
+    ).map((cb) => cb.value);
+
+    fetch("/api/mostruario/filters")
+      .then((response) => response.json())
+      .then((filters) => {
+        Object.keys(filters).forEach((key) => {
+          filters[key] = filters[key].filter((option) => {
+            const filter = `${key}-${option}`;
+            return (
+              checkedFilters.includes(option) ||
+              Array.from(productGrid.querySelectorAll(".image-item img")).some(
+                (img) => img.alt.includes(option)
+              )
+            );
+          });
+
+          // Update the disabled state of the checkboxes
+          filterContainer
+            .querySelectorAll(`.${key} input`)
+            .forEach((checkbox) => {
+              checkbox.disabled =
+                !filters[key].includes(checkbox.value) && !checkbox.checked;
+            });
+        });
+      })
+      .catch((error) => console.error("Erro ao atualizar filtros:", error));
+  }
+
+  fetchImages(); // Fetch images initially
 });

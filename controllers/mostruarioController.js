@@ -17,9 +17,11 @@ exports.getFilters = (req, res) => {
   };
 
   files.forEach((file) => {
-    const parts = file.replace(".jpg", "").split(" --- ");
+    const parts = file.replace(".jpg", "").split(" --- ").slice(0, 5);
     if (parts.length === 5) {
-      const [type, name, classification, style, environment] = parts;
+      const [type, name, classification, style, environment] = parts.map(
+        (part) => (part === "NULL" ? "" : part)
+      );
       filters.types.add(type.replace(/-/g, " "));
       filters.names.add(name.replace(/-/g, " "));
       filters.classifications.add(classification.replace(/-/g, " "));
@@ -29,7 +31,7 @@ exports.getFilters = (req, res) => {
   });
 
   Object.keys(filters).forEach((key) => {
-    filters[key] = Array.from(filters[key]);
+    filters[key] = Array.from(filters[key]).filter((value) => value !== "");
   });
 
   res.json(filters);
@@ -45,7 +47,9 @@ exports.getImages = (req, res) => {
     .filter((file) => {
       const [type, name, classification, style, environment] = file
         .replace(".jpg", "")
-        .split(" --- ");
+        .split(" --- ")
+        .slice(0, 5)
+        .map((part) => (part === "NULL" ? "" : part));
       const fileName =
         `${type} --- ${name} --- ${classification} --- ${style} --- ${environment}`.toLowerCase();
       const matchesCategory =
@@ -61,4 +65,34 @@ exports.getImages = (req, res) => {
     }));
 
   res.json(images);
+};
+
+exports.renderAdminPage = (req, res) => {
+  res.render("pages/admin");
+};
+
+exports.handleUpload = (req, res) => {
+  const { senha, tipo, nome, classificacao, estilo, ambiente } = req.body;
+  const expectedPassword = "Dipedr@10";
+
+  if (senha !== expectedPassword) {
+    return res.status(403).send("Senha incorreta");
+  }
+
+  const fields = [tipo, nome, classificacao, estilo, ambiente].map(
+    (field) => field || "NULL"
+  );
+  const fileName = `${fields.join(" --- ")}.jpg`;
+
+  if (!req.file) {
+    return res.status(400).send("Nenhum arquivo enviado");
+  }
+
+  const uploadPath = path.join(__dirname, "../public/img/mostruario", fileName);
+
+  // Corrigindo o problema de permissão com copyFileSync e unlinkSync
+  fs.copyFileSync(req.file.path, uploadPath);
+  fs.unlinkSync(req.file.path);
+
+  res.status(200).send("Upload realizado com sucesso!");
 };
