@@ -71,6 +71,24 @@ exports.renderAdminPage = (req, res) => {
   res.render("pages/admin");
 };
 
+const getNextId = () => {
+  const imagePath = path.join(__dirname, "../public/img/mostruario");
+  const files = fs.readdirSync(imagePath);
+  let maxId = 0;
+
+  files.forEach((file) => {
+    const idMatch = file.match(/--- (\d+)\.jpg$/);
+    if (idMatch) {
+      const id = parseInt(idMatch[1], 10);
+      if (id > maxId) {
+        maxId = id;
+      }
+    }
+  });
+
+  return String(maxId + 1).padStart(4, "0");
+};
+
 exports.handleUpload = (req, res) => {
   const { senha, tipo, nome, classificacao, estilo, ambiente } = req.body;
   const expectedPassword = "Dipedr@10";
@@ -82,7 +100,8 @@ exports.handleUpload = (req, res) => {
   const fields = [tipo, nome, classificacao, estilo, ambiente].map(
     (field) => field || "NULL"
   );
-  const fileName = `${fields.join(" --- ")}.jpg`;
+  const nextId = getNextId();
+  const fileName = `${fields.join(" --- ")} --- ${nextId}.jpg`;
 
   if (!req.file) {
     return res.status(400).send("Nenhum arquivo enviado");
