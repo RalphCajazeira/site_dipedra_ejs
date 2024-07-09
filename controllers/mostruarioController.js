@@ -41,7 +41,7 @@ exports.getImages = (req, res) => {
   const imagePath = path.join(__dirname, "../public/img/mostruario");
   const files = fs.readdirSync(imagePath);
   const { category = "", filters = "" } = req.query;
-  const filterArray = filters.split(",");
+  const filterArray = filters.split(",").map((filter) => filter.toLowerCase());
 
   const images = files
     .filter((file) => {
@@ -55,7 +55,7 @@ exports.getImages = (req, res) => {
       const matchesCategory =
         category === "" || fileName.includes(category.toLowerCase());
       const matchesFilters = filterArray.every((filter) =>
-        fileName.includes(filter.toLowerCase())
+        filter.split("|").some((f) => fileName.includes(f))
       );
       return matchesCategory && matchesFilters;
     })
